@@ -1,24 +1,20 @@
-import { useRef } from "react";
-import { useState } from "react";
+import { useState, useRef } from "react";
 import "./App.css";
 
 function App() {
-  const [isVisible, setIsVisible] = useState(false);
   const [formData, setFormData] = useState([]);
 
   const InputNom = useRef();
   const InputPrenom = useRef();
   const InputAge = useRef();
+  const model = useRef();
 
   const handelClickButton = (event) => {
     const btn = event.target.id;
 
     switch (btn) {
       case "add":
-        setIsVisible(true);
-        break;
-      case "deleteAll":
-        console.log("btn deleteAll users");
+        model.current.style.display = "block";
         break;
     }
   };
@@ -35,7 +31,7 @@ function App() {
       },
     ]);
 
-    setIsVisible(false);
+    model.current.style.display = "none";
   };
 
   const handelClickLignBtn = (index, event) => {
@@ -46,7 +42,10 @@ function App() {
         alert("update user " + index);
         break;
       case "deleteOne":
-        alert("delete user " + index);
+        const newArr = formData.filter(
+          (item) => item.nom !== formData[index].nom
+        );
+        setFormData(newArr);
         break;
       default:
         console.log("error");
@@ -54,38 +53,17 @@ function App() {
     }
   };
 
-  const handelCheckbox = (e) => {
-    const checkbox = e.target;
-    const checkboxes = document.querySelectorAll(
-      'tbody input[type="checkbox"]'
-    );
-
-    if (checkbox.checked && checkbox.id === "checkAll") {
-      checkboxes.forEach(function (checkbox) {
-        checkbox.checked = true;
-      });
-    } else {
-      checkboxes.forEach(function (checkbox) {
-        checkbox.checked = false;
-      });
-    }
-  };
-
   return (
-    <>
+    <div className="container">
       <button id="add" onClick={handelClickButton} className="btn">
         add user
       </button>
-      <button id="deleteAll" onClick={handelClickButton} className="btn">
-        delete users
-      </button>
+
       <h1>Users</h1>
+
       <table border={1}>
         <thead>
           <tr>
-            <th>
-              <input type="checkbox" id="checkAll" onChange={handelCheckbox} />
-            </th>
             <th>id</th>
             <th>nom</th>
             <th>prenom</th>
@@ -96,15 +74,12 @@ function App() {
         <tbody>
           {formData.length === 0 ? (
             <tr>
-              <td colSpan={6}>table empty</td>
+              <td colSpan={5}>table empty</td>
             </tr>
           ) : (
             formData.map((user, index) => {
               return (
                 <tr key={index}>
-                  <td>
-                    <input type="checkbox" onChange={handelCheckbox} />
-                  </td>
                   <td>{index}</td>
                   <td>{user.nom}</td>
                   <td>{user.prenom}</td>
@@ -131,31 +106,30 @@ function App() {
       </table>
 
       {/* model */}
-      {isVisible && (
-        <div id="model">
-          <form onSubmit={handelSubmit}>
-            <div>
-              <label htmlFor="nom">Nom:</label>
-              <br />
-              <input type="text" id="nom" ref={InputNom} />
-            </div>
-            <div>
-              <label htmlFor="prenom">Prenom:</label>
-              <br />
-              <input type="text" id="prenom" ref={InputPrenom} />
-            </div>
 
-            <div>
-              <label htmlFor="age">Age:</label>
-              <br />
-              <input type="number" id="age" ref={InputAge} />
-            </div>
+      <div id="model" ref={model}>
+        <form onSubmit={handelSubmit}>
+          <div>
+            <label htmlFor="nom">Nom:</label>
+            <br />
+            <input type="text" id="nom" ref={InputNom} />
+          </div>
+          <div>
+            <label htmlFor="prenom">Prenom:</label>
+            <br />
+            <input type="text" id="prenom" ref={InputPrenom} />
+          </div>
 
-            <input type="submit" value="send" />
-          </form>
-        </div>
-      )}
-    </>
+          <div>
+            <label htmlFor="age">Age:</label>
+            <br />
+            <input type="number" id="age" ref={InputAge} />
+          </div>
+
+          <input type="submit" value="send" />
+        </form>
+      </div>
+    </div>
   );
 }
 
