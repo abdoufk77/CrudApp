@@ -1,0 +1,50 @@
+body {
+  position: relative;
+}
+.container {
+  width: 80%;
+  margin: auto;
+}
+
+button#add {
+  background-color: lightgreen;
+}
+
+button#add:hover {
+  border: 2px solid lightgreen;
+  background-color: transparent;
+  transition: 0.3s;
+}
+
+table {
+  width: 100%;
+  text-align: center;
+}
+
+button#add,
+button#updateOne,
+button#deleteOne {
+  padding: 5px 10px;
+  border: 2px solid transparent;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+button#updateOne {
+  background-color: lightblue;
+}
+
+button#deleteOne {
+  background-color: rgb(241, 124, 124);
+}
+
+#model {
+  display: none;
+  padding: 5px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, 50%);
+  background-color: rgb(255, 254, 254);
+  border: 1px solid;
+}
