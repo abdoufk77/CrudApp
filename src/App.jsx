@@ -4,58 +4,112 @@ import "./App.css";
 function App() {
   const [formData, setFormData] = useState([]);
 
+  const InputId = useRef();
   const InputNom = useRef();
   const InputPrenom = useRef();
   const InputAge = useRef();
+  const InputSubmit = useRef();
   const model = useRef();
 
-  const handelClickButton = (event) => {
-    const btn = event.target.id;
-
-    switch (btn) {
-      case "add":
-        model.current.style.display = "block";
-        break;
-    }
+  const hadelClickAddUser = () => {
+    openModel();
+    InputSubmit.current.value = "ajouter user";
   };
 
-  const handelSubmit = (event) => {
-    event.preventDefault();
+  //create user
+  const createUser = () => {
+    let id = InputId.current.value;
+    let nom = InputNom.current.value;
+    let prenom = InputPrenom.current.value;
+    let age = InputAge.current.value;
+    //verfication des champs
+    //...
 
-    setFormData((prevState) => [
-      ...prevState,
+    setFormData((perv) => [
+      ...perv,
       {
-        [InputNom.current.id]: InputNom.current.value,
-        [InputPrenom.current.id]: InputPrenom.current.value,
-        [InputAge.current.id]: InputAge.current.value,
+        [InputId.current.id]: id,
+        [InputNom.current.id]: nom,
+        [InputPrenom.current.id]: prenom,
+        [InputAge.current.id]: age,
       },
     ]);
 
+    reset(InputId, InputNom, InputPrenom, InputAge);
+  };
+
+  //edit user
+  const editUser = (user) => {
+    openModel();
+    InputSubmit.current.value = "update user";
+
+    InputId.current.value = user.id;
+    InputNom.current.value = user.nom;
+    InputPrenom.current.value = user.prenom;
+    InputAge.current.value = user.age;
+
+    InputId.current.disabled = true;
+  };
+
+  //update user
+  const updateUser = () => {
+    let id = InputId.current.value;
+    let nom = InputNom.current.value;
+    let prenom = InputPrenom.current.value;
+    let age = InputAge.current.value;
+
+    setFormData(
+      formData.map((user) =>
+        user.id == id ? { ...user, nom: nom, prenom: prenom, age: age } : user
+      )
+    );
+
+    reset(InputId, InputNom, InputPrenom, InputAge);
+  };
+
+  //delete user
+  const deleteUser = (id) => {
+    setFormData(formData.filter((user) => user.id !== id));
+  };
+
+  //submit
+  const handelSubmit = (e) => {
+    e.preventDefault();
+    let InputSubmitValue = InputSubmit.current.value;
+
+    switch (InputSubmitValue) {
+      case "ajouter user":
+        createUser();
+        closeModel();
+        break;
+      case "update user":
+        updateUser();
+        closeModel();
+        break;
+      default:
+        console.error("error!");
+        break;
+    }
+  };
+
+  //open model
+  const openModel = () => {
+    model.current.style.display = "block";
+    InputId.current.focus();
+  };
+  //close model
+  const closeModel = () => {
     model.current.style.display = "none";
   };
 
-  const handelClickLignBtn = (index, event) => {
-    const btn = event.target.id;
-
-    switch (btn) {
-      case "updateOne":
-        alert("update user " + index);
-        break;
-      case "deleteOne":
-        const newArr = formData.filter(
-          (item) => item.nom !== formData[index].nom
-        );
-        setFormData(newArr);
-        break;
-      default:
-        console.log("error");
-        break;
-    }
+  //reset inputs
+  const reset = (...Inputs) => {
+    Inputs.forEach((item) => (item.current.value = ""));
   };
 
   return (
     <div className="container">
-      <button id="add" onClick={handelClickButton} className="btn">
+      <button id="add" onClick={hadelClickAddUser}>
         add user
       </button>
 
@@ -80,21 +134,15 @@ function App() {
             formData.map((user, index) => {
               return (
                 <tr key={index}>
-                  <td>{index}</td>
+                  <td>{user.id}</td>
                   <td>{user.nom}</td>
                   <td>{user.prenom}</td>
                   <td>{user.age}</td>
                   <td>
-                    <button
-                      id="updateOne"
-                      onClick={(e) => handelClickLignBtn(index, e)}
-                    >
+                    <button id="updateOne" onClick={() => editUser(user)}>
                       update
                     </button>
-                    <button
-                      id="deleteOne"
-                      onClick={(e) => handelClickLignBtn(index, e)}
-                    >
+                    <button id="deleteOne" onClick={() => deleteUser(user.id)}>
                       delete
                     </button>
                   </td>
@@ -106,9 +154,13 @@ function App() {
       </table>
 
       {/* model */}
-
       <div id="model" ref={model}>
         <form onSubmit={handelSubmit}>
+          <div>
+            <label htmlFor="nom">Id:</label>
+            <br />
+            <input type="text" id="id" ref={InputId} />
+          </div>
           <div>
             <label htmlFor="nom">Nom:</label>
             <br />
@@ -126,7 +178,7 @@ function App() {
             <input type="number" id="age" ref={InputAge} />
           </div>
 
-          <input type="submit" value="send" />
+          <input type="submit" value="send" ref={InputSubmit} />
         </form>
       </div>
     </div>
