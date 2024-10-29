@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef } from "react";
 import "./App.css";
 
 function App() {
@@ -10,20 +10,6 @@ function App() {
   const InputAge = useRef();
   const InputSubmit = useRef();
   const model = useRef();
-
-  useEffect(() => {
-    fetchData();
-  }, []);
-
-  const fetchData = async () => {
-    try {
-      const response = await fetch("http://localhost:3000");
-      const data = await response.json();
-      setFormData(data);
-    } catch (error) {
-      console.error("Erreur lors de la récupération des données :", error);
-    }
-  };
 
   const hadelClickAddUser = () => {
     openModel();
